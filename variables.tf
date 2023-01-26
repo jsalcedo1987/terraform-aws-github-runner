@@ -274,18 +274,26 @@ variable "runner_allow_prerelease_binaries" {
 variable "block_device_mappings" {
   description = "The EC2 instance block device configuration. Takes the following keys: `device_name`, `delete_on_termination`, `volume_type`, `volume_size`, `encrypted`, `iops`, `throughput`, `kms_key_id`, `snapshot_id`."
   type = list(object({
-    delete_on_termination = optional(bool, true)
-    device_name           = optional(string, "/dev/xvda")
-    encrypted             = optional(bool, true)
-    iops                  = optional(number)
-    kms_key_id            = optional(string)
-    snapshot_id           = optional(string)
-    throughput            = optional(number)
+    delete_on_termination = bool
+    device_name           = string
+    encrypted             = bool
+    iops                  = number
+    kms_key_id            = string
+    snapshot_id           = string
+    throughput            = number
     volume_size           = number
-    volume_type           = optional(string, "gp3")
+    volume_type           = string
   }))
   default = [{
-    volume_size = 30
+    delete_on_termination = true
+    device_name           = "/dev/xvda"
+    encrypted             = true
+    iops                  = null
+    kms_key_id            = null
+    snapshot_id           = null
+    throughput            = null
+    volume_size           = 30
+    volume_type           = "gp3"
   }]
 }
 
@@ -734,10 +742,15 @@ variable "enable_user_data_debug_logging_runner" {
 variable "ssm_paths" {
   description = "The root path used in SSM to store configuration and secreets."
   type = object({
-    root       = optional(string, "github-action-runners")
-    app        = optional(string, "app")
-    runners    = optional(string, "runners")
-    use_prefix = optional(bool, true)
+    root       = string
+    app        = string
+    runners    = string
+    use_prefix = bool
   })
-  default = {}
+  default = {
+    root       = "github-action-runners"
+    app        = "app"
+    runners    = "runners"
+    use_prefix = true
+  }
 }
